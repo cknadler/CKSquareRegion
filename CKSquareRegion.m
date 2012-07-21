@@ -8,9 +8,9 @@
 #import "CKSquareRegion.h"
 
 #define kBEARING_NORTH 0.0
-#define kBEARING_EAST  90.0
-#define kBEARING_SOUTH 180.0
-#define kBEARING_WEST  270.0
+#define kBEARING_EAST  .5 * M_PI
+#define kBEARING_SOUTH M_PI
+#define kBEARING_WEST  1.5 * M_PI
 
 #define kEARTH_RADIUS_KM 6371.0
 
