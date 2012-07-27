@@ -30,18 +30,43 @@
         _center = center;
         _identifier = identifier;
         
-        // Calculate latitude and longitude bounds
-        _maxLat = asin(sin(self.center.latitude) * cos(sideLength/kEARTH_RADIUS_KM) + 
-                       cos(self.center.latitude) * sin(sideLength/kEARTH_RADIUS_KM) * cos(kBEARING_NORTH));
+        // Store the angular distance of each side from the center
+        double angDist = sideLength / kEARTH_RADIUS_KM;
         
-        _minLat = asin(sin(self.center.latitude) * cos(sideLength/kEARTH_RADIUS_KM) + 
-                       cos(self.center.latitude) * sin(sideLength/kEARTH_RADIUS_KM) * cos(kBEARING_SOUTH)); 
+        // Convert center lat and lng to radians
+        double centerLatRad = [self degreesToRadians:center.latitude];
+        double centerLngRad = [self degreesToRadians:center.longitude];
         
-        _maxLng = self.center.longitude + atan2(sin(kBEARING_EAST) * sin(sideLength/kEARTH_RADIUS_KM) * cos(self.center.latitude), 
-                                                cos(sideLength/kEARTH_RADIUS_KM) - sin(self.center.latitude) * sin(self.center.latitude));
+        // Calculate latitude range
+        double maxLatRad = asin(sin(centerLatRad) * cos(angDist) +
+                                cos(centerLatRad) * sin(angDist) * cos(kBEARING_NORTH));
         
-        _minLng = self.center.longitude + atan2(sin(kBEARING_WEST) * sin(sideLength/kEARTH_RADIUS_KM) * cos(self.center.latitude), 
-                                                cos(sideLength/kEARTH_RADIUS_KM) - sin(self.center.latitude) * sin(self.center.latitude));
+        double minLatRad = asin(sin(centerLatRad) * cos(angDist) +
+                                cos(centerLatRad) * sin(angDist) * cos(kBEARING_SOUTH));
+            
+        // Calculate longitude range
+        // Longitude range requires coresponding latitudes:
+        double tempLatRad;
+        
+        // Calculate max longitude
+        tempLatRad = asin(sin(centerLatRad) * cos(angDist) +
+                          cos(centerLatRad) * sin(angDist) * cos(kBEARING_EAST));
+        
+        double maxLngRad = centerLngRad + atan2(sin(kBEARING_EAST) * sin(angDist) * cos(centerLatRad),
+                                                cos(angDist) - sin(centerLatRad) * sin(tempLatRad));
+                
+        // Calculate min longitude
+        tempLatRad = asin(sin(centerLatRad) * cos(angDist) +
+                          cos(centerLatRad) * sin(angDist) * cos(kBEARING_WEST));
+        
+        double minLngRad = centerLngRad + atan2(sin(kBEARING_WEST) * sin(angDist) * cos(centerLatRad),
+                                                cos(angDist) - sin(centerLatRad) * sin(tempLatRad));
+        
+        // Convert lat and lng ranges to radians
+        _maxLat = [self radiansToDegrees:maxLatRad];
+        _minLat = [self radiansToDegrees:minLatRad];
+        _maxLng = [self radiansToDegrees:maxLngRad];
+        _minLng = [self radiansToDegrees:minLngRad];
     }
     return self;
 }
@@ -52,13 +77,19 @@
     BOOL inLatRange;
     BOOL inLngRange;
     
-    if ((coordinate.latitude <= _maxLat) && (coordinate.latitude >= _minLat))
+    if ((coordinate.latitude <= self.maxLat) && (coordinate.latitude >= self.minLat))
         inLatRange = YES;
     
-    if ((coordinate.longitude <= _maxLng) && (coordinate.longitude >= _minLng))
+    if ((coordinate.longitude <= self.maxLng) && (coordinate.longitude >= self.minLng))
         inLngRange = YES;
     
     return inLatRange && inLngRange; 
 }
+
+#pragma mark - private
+
+- (double)degreesToRadians:(double)degrees { return degrees * M_PI / 180; }
+
+- (double)radiansToDegrees:(double)radians { return radians * 180 / M_PI; }
 
 @end
