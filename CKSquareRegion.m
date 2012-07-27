@@ -22,16 +22,16 @@
 @synthesize maxLng = _maxLng;
 @synthesize minLng = _minLng;
 
-- (id)initRegionWithCenter:(CLLocationCoordinate2D)center sideLength:(double)sideLength identifier:(NSString *)identifier
+- (id)initRegionWithCenter:(CLLocationCoordinate2D)center sideLength:(CLLocationDistance)sideLength identifier:(NSString *)identifier
 {
     self = [super init];
     if (self){
         // Basic assignment
         _center = center;
         _identifier = identifier;
-        
+
         // Store the angular distance of each side from the center
-        double angDist = sideLength / kEARTH_RADIUS_KM;
+        double angDist = sideLength / kEARTH_RADIUS_KM / 2;
         
         // Convert center lat and lng to radians
         double centerLatRad = [self degreesToRadians:center.latitude];

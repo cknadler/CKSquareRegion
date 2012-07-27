@@ -16,8 +16,8 @@
 // String identifier or name for the region
 @property (nonatomic, readonly) NSString *identifier;
 
-// Side length is the length of any side of the square. This is assumed to be in meters.
-- (id)initRegionWithCenter:(CLLocationCoordinate2D)center sideLength:(double)sideLength identifier:(NSString *)identifier;
+// Side length is the length of a side of the square. This is assumed to be in meters.
+- (id)initRegionWithCenter:(CLLocationCoordinate2D)center sideLength:(CLLocationDistance)sideLength identifier:(NSString *)identifier;
 
 // A hit test for the coordinate region
 - (BOOL)containsCoordinate:(CLLocationCoordinate2D)coordinate;
