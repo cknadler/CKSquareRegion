@@ -14,6 +14,14 @@
 
 #define kEARTH_RADIUS_KM 6371.0
 
+@interface CKSquareRegion ()
+
+- (double)degreesToRadians:(double)degrees;
+- (double)radiansToDegrees:(double)radians;
+
+@end
+
+
 @implementation CKSquareRegion
 @synthesize center = _center;
 @synthesize identifier = _identifier;
@@ -29,7 +37,7 @@
         // Basic assignment
         _center = center;
         _identifier = identifier;
-
+        
         // Store the angular distance of each side from the center
         double angDist = sideLength / kEARTH_RADIUS_KM / 2;
         
@@ -43,7 +51,7 @@
         
         double minLatRad = asin(sin(centerLatRad) * cos(angDist) +
                                 cos(centerLatRad) * sin(angDist) * cos(kBEARING_SOUTH));
-            
+        
         // Calculate longitude range
         // Longitude range requires coresponding latitudes:
         double tempLatRad;
@@ -54,7 +62,7 @@
         
         double maxLngRad = centerLngRad + atan2(sin(kBEARING_EAST) * sin(angDist) * cos(centerLatRad),
                                                 cos(angDist) - sin(centerLatRad) * sin(tempLatRad));
-                
+        
         // Calculate min longitude
         tempLatRad = asin(sin(centerLatRad) * cos(angDist) +
                           cos(centerLatRad) * sin(angDist) * cos(kBEARING_WEST));
@@ -83,7 +91,7 @@
     if ((coordinate.longitude <= self.maxLng) && (coordinate.longitude >= self.minLng))
         inLngRange = YES;
     
-    return inLatRange && inLngRange; 
+    return inLatRange && inLngRange;
 }
 
 #pragma mark - private
